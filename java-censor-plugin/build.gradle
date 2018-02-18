@@ -79,15 +79,13 @@ afterEvaluate { project ->
             mavenDeployer {
                 beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-                repository(url: "file:///tmp/repo")
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
+                    authentication(userName: repoUsername, password: repoPassword)
+                }
 
-//                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
-//                    authentication(userName: repoUsername, password: repoPassword)
-//                }
-//
-//                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
-//                    authentication(userName: repoUsername, password: repoPassword)
-//                }
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+                    authentication(userName: repoUsername, password: repoPassword)
+                }
 
                 pom.project {
                     name PROJECT_NAME
@@ -123,6 +121,7 @@ afterEvaluate { project ->
     }
 
     signing {
+        required { SDK_VERSION_NAME.contains("SNAPSHOT") == false }
         sign configurations.archives
     }
 
