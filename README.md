@@ -54,7 +54,7 @@ task censorSource(type: com.sebchlan.javacensor.CensorCopyTask) {
 
 ### Android
 
-Java Censor is also applicable to Android projects. The needed steps are very similar to the ones above. 
+Java Censor is also applicable to Android projects. The installation steps are very similar to the ones above. 
 This is how a configuration can look like:
 
 ```gradle
