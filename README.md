@@ -1,6 +1,6 @@
 
 <p align="center">
-<img src="https://i.imgur.com/P4jbfWm.png" title="source: imgur.com" />
+<a href="https://github.com/schlan/java-censor"><img src="https://i.imgur.com/P4jbfWm.png" title="source: imgur.com" /></a>
 </p>
 
 <p align="center">
