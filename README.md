@@ -101,4 +101,4 @@ afterEvaluate { project ->
 
 ## Contribution 
 
-Feel free to submit a PR or file an issue. Please make sure, when filing a bug to provided sufficient reproduction steps, or even a failing test. 
+Feel free to submit a PR or file an issue. Please make sure, when filing a bug, to provide sufficient reproduction steps or even a failing test.
