@@ -1,0 +1,12 @@
+.gradle
+build/
+output/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Idea
+.idea
+*iml
+
+local.properties
