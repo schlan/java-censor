@@ -4,10 +4,12 @@ buildscript {
 
     repositories {
         jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
 
     dependencies {
         classpath group: "org.jetbrains.kotlin", name: "kotlin-gradle-plugin", version: "1.2.21"
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.10"
     }
 }
 
@@ -153,5 +155,31 @@ afterEvaluate { project ->
     artifacts {
         archives sourcesJar
         archives javadocJar
+    }
+}
+
+
+///// Deploy to Gradle plugin
+
+apply plugin: "com.gradle.plugin-publish"
+
+pluginBundle {
+    website = 'https://github.com/schlan/java-censor'
+    vcsUrl = 'https://github.com/schlan/java-censor'
+    description = 'Java Censor is a Gradle plugin that enables developers to publish sources of closed source projects to a Maven repository. It does this by removing implemented code only leaving the signatures of public interfaces, classes, methods and fields behind. '
+    tags = ['java', 'android', 'library', 'source', 'censor', 'redcat', 'source-artefact', 'deploy', 'deployment']
+
+    plugins {
+        javaCensor {
+            id = SDK_GROUP_ID
+            displayName = 'Java Censor Plugin'
+            version = SDK_VERSION_NAME
+        }
+    }
+
+    mavenCoordinates {
+        groupId = SDK_GROUP_ID
+        artifactId = SDK_ARTIFACT_ID
+        version = SDK_VERSION_NAME
     }
 }
