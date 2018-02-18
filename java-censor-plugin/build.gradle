@@ -1,0 +1,158 @@
+
+
+buildscript {
+
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath group: "org.jetbrains.kotlin", name: "kotlin-gradle-plugin", version: "1.2.21"
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+apply plugin: 'kotlin'
+
+dependencies {
+    compile gradleApi()
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib'
+    compile group: 'com.github.javaparser', name: 'javaparser-core', version: '3.5.14'
+
+    testCompile gradleTestKit()
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: '1.2.21'
+    testCompile group: 'com.google.truth', name: 'truth', version: '0.36'
+}
+
+//// Setup for testing
+
+// Write the plugin's classpath to a file to share with the tests
+task createClasspathManifest {
+    def outputDir = file("$buildDir/$name")
+
+    inputs.files sourceSets.main.runtimeClasspath
+    outputs.dir outputDir
+
+    doLast {
+        outputDir.mkdirs()
+        file("$outputDir/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
+    }
+}
+
+// Add the classpath file to the test runtime classpath
+dependencies {
+    testRuntime files(createClasspathManifest)
+}
+
+
+//// Deployment
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+ext {
+    SDK_GROUP_ID = 'com.sebchlan.javacensor'
+    SDK_URL = 'https://github.com/schlan/java-censor'
+    PROJECT_NAME = 'Java Censor'
+    PROJECT_DESCRIPTION = 'Censor Java Source Files'
+    SDK_VERSION_NAME = '1.0.0-SNAPSHOT'
+    SDK_ARTIFACT_ID = 'java-censor'
+    SDK_PACKAGING = 'jar'
+    JAVA_DOC_TITLE = 'Java Censor'
+    POM_DEVELOPER_ID = 'sebchlan'
+    POM_DEVELOPER_NAME = 'Sebastian Chlan'
+
+    repoUsername = rootProject.properties["sebSonatypeUsername"]
+    repoPassword = rootProject.properties["sebSonatypePassword"]
+}
+
+ext."signing.keyId" = rootProject.properties["sebKeyId"]
+ext."signing.secretKeyRingFile" = rootProject.properties["sebKeyRingFile"]
+ext."signing.password" = rootProject.properties["sebKeyPassword"]
+
+afterEvaluate { project ->
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "file:///tmp/repo")
+
+//                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
+//                    authentication(userName: repoUsername, password: repoPassword)
+//                }
+//
+//                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+//                    authentication(userName: repoUsername, password: repoPassword)
+//                }
+
+                pom.project {
+                    name PROJECT_NAME
+                    description PROJECT_DESCRIPTION
+                    groupId SDK_GROUP_ID
+                    artifactId SDK_ARTIFACT_ID
+                    packaging SDK_PACKAGING
+                    version SDK_VERSION_NAME
+                    url SDK_URL
+
+                    scm {
+                        url SDK_URL
+                        connection 'scm:git:https://github.com/schlan/java-censore.git'
+                        developerConnection 'scm:git:git@github.com:schlan/java-censor.git'
+                    }
+
+                    licenses {
+                        license {
+                            name 'The Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id POM_DEVELOPER_ID
+                            name POM_DEVELOPER_NAME
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    signing {
+        sign configurations.archives
+    }
+
+    if (JavaVersion.current().isJava8Compatible()) {
+        allprojects {
+            tasks.withType(Javadoc) {
+                options.addStringOption('Xdoclint:none', '-quiet')
+            }
+        }
+    }
+
+    task sourcesJar(type: Jar, dependsOn:classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    tasks.withType(Javadoc) {
+        source = sourceSets.main.allJava
+        options.addStringOption('Xdoclint:none', '-quiet')
+        title = JAVA_DOC_TITLE
+        options.links("http://docs.oracle.com/javase/8/docs/api/")
+    }
+
+    task javadocJar(type: Jar, dependsOn:javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+}
