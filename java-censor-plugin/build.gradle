@@ -65,8 +65,8 @@ ext {
     POM_DEVELOPER_ID = 'sebchlan'
     POM_DEVELOPER_NAME = 'Sebastian Chlan'
 
-    repoUsername = rootProject.properties["sebSonatypeUsername"]
-    repoPassword = rootProject.properties["sebSonatypePassword"]
+    repoUsername = System.getenv("sebSonatypeUsername") ?: rootProject.properties["sebSonatypeUsername"]
+    repoPassword = System.getenv("sebSonatypePassword") ?: rootProject.properties["sebSonatypePassword"]
 }
 
 ext."signing.keyId" = rootProject.properties["sebKeyId"]
