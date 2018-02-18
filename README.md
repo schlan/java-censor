@@ -25,7 +25,7 @@ For using Java Censor in a Gradle project, it needs to be added to the project f
 Applying the plugin to a module introduces a new task type called `CensorCopyTask`.  The `CensorCopyTask` behaves like the built-in `Copy` task and has two mandatory configuration options.
 
 <dl>
-  <dt>from = [set of files]</dt>
+  <dt>from = [set of input directories/files]</dt>
   <dd>Takes a set of files as input.</dd>
 
   <dt>into = [output directory]</dt>
