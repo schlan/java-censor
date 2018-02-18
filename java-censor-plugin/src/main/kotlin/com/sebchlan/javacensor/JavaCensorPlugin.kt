@@ -64,7 +64,13 @@ class CensorVisitor : ModifierVisitor<Void>() {
         return if (n.isPublic) {
 
             // Replace constructors
-            n.constructors.forEach { it.body = getBlockWithException() }
+            n.constructors.forEach {
+                if (it.isPublic) {
+                    it.body = getBlockWithException()
+                } else {
+                    it.remove()
+                }
+            }
 
             // Continue visiting children
             super.visit(n, arg)
