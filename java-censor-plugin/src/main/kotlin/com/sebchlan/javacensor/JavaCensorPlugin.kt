@@ -6,6 +6,7 @@ import com.github.javaparser.ast.NodeList
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
 import com.github.javaparser.ast.body.FieldDeclaration
 import com.github.javaparser.ast.body.MethodDeclaration
+import com.github.javaparser.ast.comments.BlockComment
 import com.github.javaparser.ast.comments.LineComment
 import com.github.javaparser.ast.expr.ObjectCreationExpr
 import com.github.javaparser.ast.expr.StringLiteralExpr
@@ -131,10 +132,10 @@ class CensorVisitor : ModifierVisitor<Void>() {
     private fun getBlockWithException(): BlockStmt {
 
         val type = JavaParser.parseClassOrInterfaceType("java.lang.RuntimeException")
-        val ex = ObjectCreationExpr(null, type, NodeList())
-        ex.addArgument(StringLiteralExpr(exceptionText.nextElement()))
+        val ex = ObjectCreationExpr(null, type, NodeList(StringLiteralExpr(exceptionText.nextElement(indexException))))
 
         val throwStmt = ThrowStmt(ex)
+        throwStmt.setLineComment(javaCensorComment)
 
         val block = BlockStmt()
         block.addStatement(throwStmt)
@@ -148,14 +149,21 @@ class CommentVisitor : ModifierVisitor<Void>() {
 
     override fun visit(n: ClassOrInterfaceDeclaration, arg: Void?): Visitable? {
         if (n.members.isEmpty()) {
-            n.addOrphanComment(LineComment(commentList.nextElement()))
+
+            n.addOrphanComment(LineComment(""))
+            n.addOrphanComment(LineComment(commentList.nextElement(indexComment)))
+            n.addOrphanComment(LineComment(""))
+            n.addOrphanComment(LineComment(javaCensorComment))
+            n.addOrphanComment(LineComment(""))
         }
         return super.visit(n, arg)
     }
 
 }
 
-private val index = AtomicInteger()
-private fun List<String>.nextElement(): String = get(index.getAndIncrement() % size)
+private const val javaCensorComment = "This code was redacted by Java Censor - Learn more about it at https://github.com/schlan/java-censor"
+private fun List<String>.nextElement(index: AtomicInteger): String = get(index.getAndIncrement() % size)
+private val indexComment = AtomicInteger()
+private val indexException = AtomicInteger()
 val commentList = listOf("¯\\_(ツ)_/¯", "Oh Hai Mark!", "Let’s go eat, huh?", "Hi, doggie.", "Ha ha ha ha ha. What a story Mark!", "Denny, two is great, but three is a crowd.", " I cannot tell you, its confidential.", "Chirp chirp chirp chirp!", "You are tearing me apart Lisa!")
 val exceptionText = "It's in theaters now! Coming this summer: Two brothers. In a van. And then a meteor hit. And they ran as fast as they could, from giant cat monsters. And then a giant tornado came and that's when things got knocked into 12th gear. A Mexican armada shows up. With weapons made from Two--tomatoes. And you better bet your bottom dollar that these two brothers know how to handle business. In: Alien Invasion Tomato Monster Mexican Armada Brothers, Who Are Just Regular Brothers, Running In a van from an Asteroid and All Sorts of Things THE MOVIE! Hold on, there's more! Old women are coming, and they're also in the movie, and they're gonna come, and cross attack these two brothers. But let's get back to the brothers, because they're-- they have a strong bond. You don't want to know about it here, but I'll tell you one thing: The moon it comes crashing into Earth. And what do you do then? It's two brothers and--and th-they're It's called Two brothers. Two brothers! It's just called Two Brothers.".split(",", ".", "/", "\\", "?", "!", ";", "\"", ":", "-").map { it.trim() }
