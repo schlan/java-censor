@@ -5,7 +5,7 @@
 <a href="https://travis-ci.org/schlan/java-censor"><img src="https://travis-ci.org/schlan/java-censor.svg?branch=master" alt="Build Status" /></a><a href="https://repo.jfrog.org/artifactory/libs-release-bintray/com/sebchlan/javacensor/java-censor/">
 <img src="https://img.shields.io/maven-central/v/com.sebchlan.javacensor/java-censor.svg" alt="Java Censor Version" /></a>
 <a href="https://oss.sonatype.org/content/repositories/snapshots/com/sebchlan/javacensor/java-censor/"> <img src="https://img.shields.io/nexus/s/https/oss.sonatype.org/com.sebchlan.javacensor/java-censor.svg" /></a>
-<a href="https://github.com/schlan/java-censor/blob/master/LICENSE.md"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License" /></a>
+<a href="https://github.com/schlan/java-censor/blob/master/LICENSE.md"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License" /></a> <a href="https://plugins.gradle.org/plugin/com.sebchlan.javacensor"><img src="https://img.shields.io/badge/Gradle-Plugin-yellow.svg" /></a>
 </p>
 
 Java Censor is a Gradle plugin that enables developers to publish sources of closed source projects to a Maven repository. It does this by removing implemented code only leaving the signatures of public interfaces, classes, methods and fields behind. 
