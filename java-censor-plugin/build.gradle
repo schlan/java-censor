@@ -60,7 +60,7 @@ ext {
     SDK_URL = 'https://github.com/schlan/java-censor'
     PROJECT_NAME = 'Java Censor'
     PROJECT_DESCRIPTION = 'Censor Java Source Files'
-    SDK_VERSION_NAME = '1.1.0'
+    SDK_VERSION_NAME = '1.2.0-SNAPSHOT'
     SDK_ARTIFACT_ID = 'java-censor'
     SDK_PACKAGING = 'jar'
     JAVA_DOC_TITLE = 'Java Censor'
