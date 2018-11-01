@@ -11,7 +11,6 @@
 Java Censor is a Gradle plugin that enables developers to publish sources of closed source projects to a Maven repository. It does this by removing implemented code only leaving the signatures of public interfaces, classes, methods and fields behind. 
 <img src="https://i.imgur.com/XO8EQ1a.png" />
 
-
 ## Purpose
 
 Java Censor is built for closed source java libraries, in particular, closed source Android libraries. When working on closed source libraries, it is usually not possible to ship a source artefact when deploying a release. 
