@@ -46,9 +46,9 @@ buildscript {
 apply plugin: 'com.sebchlan.javacensor'
 
 // Add a new task
-task censorSource(type: com.sebchlan.javacensor.CensorCopyTask) {
-    from = sourceSets.main.java.srcDirs
-    into = file("$buildDir/censored_source")
+tasks.register("censorSource", com.sebchlan.javacensor.CensorCopyTask) { task ->
+    inputs.files(sourceSets.main.java.srcDirs)
+    destinationDir = file("$buildDir/censored_source")
 }
 ```
 
@@ -65,7 +65,7 @@ buildscript {
     }
 
     dependencies {
-        classpath group: 'com.sebchlan.javacensor', name: 'java-censor', version: '1.1.0'
+        classpath group: 'com.sebchlan.javacensor', name: 'java-censor', version: '1.2.0'
     }
 }
 
@@ -81,8 +81,8 @@ afterEvaluate { project ->
         }
 
         task censorSource(type: com.sebchlan.javacensor.CensorCopyTask) {
-            from = android.sourceSets.main.java.srcDirs
-            into = file("$buildDir/generated-src")
+            inputs.files(android.sourceSets.main.java.srcDirs)
+            destinationDir = file("$buildDir/generated-src")
         }
 
         task androidSourcesJar(type: Jar) {
