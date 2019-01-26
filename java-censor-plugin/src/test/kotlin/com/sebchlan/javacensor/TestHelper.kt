@@ -33,8 +33,8 @@ buildscript {
 apply plugin: 'com.sebchlan.javacensor'
 
 task censorSource(type: com.sebchlan.javacensor.CensorCopyTask) {
-    from = files("${folder.root}/src").toSet()
-    into = file("${folder.root}/censored_source")
+    inputs.files(files("${folder.root}/src").toSet())
+    destinationDir = file("${folder.root}/censored_source")
 }
 """
     val file = folder.newFile("build.gradle")

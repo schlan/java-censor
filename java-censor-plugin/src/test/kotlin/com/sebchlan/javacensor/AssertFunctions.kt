@@ -26,7 +26,7 @@ fun assertClassHasComment(sourceFile: File) {
     val cu = readSourceFile(sourceFile)
     val clazz = getFirstClass(cu)
 
-    val hasComment = clazz.orphanComments.map { commentList.contains(it.content.trim()) }.contains(true)
+    val hasComment = clazz.orphanComments.map { it.content.trim() == comment }.contains(true)
     assertWithMessage("Ensure class has java censor comment")
             .that(hasComment).isTrue()
 }

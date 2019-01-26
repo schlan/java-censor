@@ -4,8 +4,7 @@ apply plugin: 'com.sebchlan.javacensor'
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
 
-task censorSource(type: com.sebchlan.javacensor.CensorCopyTask) {
-    from = sourceSets.main.java.srcDirs
-    into = file("$buildDir/censored_source")
+tasks.register("censorSource", com.sebchlan.javacensor.CensorCopyTask) { task ->
+    inputs.files(sourceSets.main.java.srcDirs)
+    destinationDir = file("$buildDir/censored_source")
 }
-
