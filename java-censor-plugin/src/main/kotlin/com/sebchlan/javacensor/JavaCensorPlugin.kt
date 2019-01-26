@@ -6,7 +6,6 @@ import com.github.javaparser.ast.NodeList
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
 import com.github.javaparser.ast.body.FieldDeclaration
 import com.github.javaparser.ast.body.MethodDeclaration
-import com.github.javaparser.ast.comments.BlockComment
 import com.github.javaparser.ast.comments.LineComment
 import com.github.javaparser.ast.expr.ObjectCreationExpr
 import com.github.javaparser.ast.expr.StringLiteralExpr
@@ -17,32 +16,31 @@ import com.github.javaparser.ast.visitor.Visitable
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
-import java.util.concurrent.atomic.AtomicInteger
 
 
 class JavaCensorPlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        val task = project.tasks.create("censorCopyTask", CensorCopyTask::class.java)
-        task.description = "Copy source files and censor them"
+        project.tasks.register("censorCopyTask", CensorCopyTask::class.java) { task ->
+            task.description = "Copy source files and censor them"
+        }
     }
 }
 
 open class CensorCopyTask : DefaultTask() {
 
-    @Suppress("MemberVisibilityCanBePrivate")
-    var from: Set<File> = emptySet()
-
-    @Suppress("MemberVisibilityCanBePrivate")
-    var into: File? = null
+    @OutputDirectory
+    var destinationDir: File? = null
 
     @TaskAction
     fun censor() {
-        val output = into ?: throw IllegalArgumentException("Please provide an output directory.")
+        val output = destinationDir ?: throw IllegalArgumentException("Please provide an output directory.")
+        if (!output.isDirectory) throw IllegalArgumentException("Output is not a directory")
 
         project.copy { spec ->
-            spec.from(from)
+            spec.from(inputs.files)
             spec.into(output)
         }
 
@@ -132,7 +130,7 @@ class CensorVisitor : ModifierVisitor<Void>() {
     private fun getBlockWithException(): BlockStmt {
 
         val type = JavaParser.parseClassOrInterfaceType("java.lang.RuntimeException")
-        val ex = ObjectCreationExpr(null, type, NodeList(StringLiteralExpr(exceptionText.nextElement(indexException))))
+        val ex = ObjectCreationExpr(null, type, NodeList(StringLiteralExpr(comment)))
 
         val throwStmt = ThrowStmt(ex)
         throwStmt.setLineComment(javaCensorComment)
@@ -151,7 +149,7 @@ class CommentVisitor : ModifierVisitor<Void>() {
         if (n.members.isEmpty()) {
 
             n.addOrphanComment(LineComment(""))
-            n.addOrphanComment(LineComment(commentList.nextElement(indexComment)))
+            n.addOrphanComment(LineComment(comment))
             n.addOrphanComment(LineComment(""))
             n.addOrphanComment(LineComment(javaCensorComment))
             n.addOrphanComment(LineComment(""))
@@ -162,8 +160,4 @@ class CommentVisitor : ModifierVisitor<Void>() {
 }
 
 private const val javaCensorComment = "This code was redacted by Java Censor - Learn more about it at https://github.com/schlan/java-censor"
-private fun List<String>.nextElement(index: AtomicInteger): String = get(index.getAndIncrement() % size)
-private val indexComment = AtomicInteger()
-private val indexException = AtomicInteger()
-val commentList = listOf("¯\\_(ツ)_/¯", "Oh Hai Mark!", "Let’s go eat, huh?", "Hi, doggie.", "Ha ha ha ha ha. What a story Mark!", "Denny, two is great, but three is a crowd.", " I cannot tell you, its confidential.", "Chirp chirp chirp chirp!", "You are tearing me apart Lisa!")
-val exceptionText = "It's in theaters now! Coming this summer: Two brothers. In a van. And then a meteor hit. And they ran as fast as they could, from giant cat monsters. And then a giant tornado came and that's when things got knocked into 12th gear. A Mexican armada shows up. With weapons made from Two--tomatoes. And you better bet your bottom dollar that these two brothers know how to handle business. In: Alien Invasion Tomato Monster Mexican Armada Brothers, Who Are Just Regular Brothers, Running In a van from an Asteroid and All Sorts of Things THE MOVIE! Hold on, there's more! Old women are coming, and they're also in the movie, and they're gonna come, and cross attack these two brothers. But let's get back to the brothers, because they're-- they have a strong bond. You don't want to know about it here, but I'll tell you one thing: The moon it comes crashing into Earth. And what do you do then? It's two brothers and--and th-they're It's called Two brothers. Two brothers! It's just called Two Brothers.".split(",", ".", "/", "\\", "?", "!", ";", "\"", ":", "-").map { it.trim() }
+const val comment = "Source removed"
