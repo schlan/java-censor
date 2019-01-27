@@ -65,7 +65,7 @@ buildscript {
     }
 
     dependencies {
-        classpath group: 'com.sebchlan.javacensor', name: 'java-censor', version: '1.2.0'
+        classpath group: 'com.sebchlan.javacensor', name: 'java-censor', version: '1.2.1'
     }
 }
 
