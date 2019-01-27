@@ -17,7 +17,7 @@ Java Censor is a Gradle plugin that enables developers to publish sources of clo
 Java Censor is built for closed source java libraries, in particular, closed source Android libraries. When working on closed source libraries, it is usually not possible to ship a source artefact when deploying a release. 
 That brings one big downside* for the integrators of your library. Even if you ship a Javadoc artefact, IDEs like Android Studio or IntelliJ don't use that artefact for showing documentation. Instead, they rely solely on the source artefact for showing inline documentation.  
 
-That is were Java Censor can help. Java Censor makes it possible to release a source artefact of a closed source library without exposing secret code but still allows IDEs to show inline documentation. It does that when running before the release, by removing any implemented code, only keeping public signatures (interfaces, classes, methods, constructors, fields) and Javadoc. 
+That is where Java Censor can help. Java Censor makes it possible to release a source artefact of a closed source library without exposing secret code but still allows IDEs to show inline documentation. It does that when running before the release, by removing any implemented code, only keeping public signatures (interfaces, classes, methods, constructors, fields) and Javadoc. 
 
 ## Usage
 
