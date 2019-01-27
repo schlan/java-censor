@@ -38,7 +38,7 @@ Example:
 // Add classpath dependency
 buildscript {
   dependencies {
-    classpath group: 'com.sebchlan.javacensor', name: 'java-censor', version: '1.1.0'
+    classpath group: 'com.sebchlan.javacensor', name: 'java-censor', version: '1.2.1'
   }
 }
 
